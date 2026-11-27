@@ -1278,6 +1278,7 @@ function createWindow() {
     maximizable: false,
     icon: path.join(ASSETS, 'icon.png'),
     title: 'Insomnia',
+    skipTaskbar: true, // tray-only app
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -1294,6 +1295,10 @@ function createWindow() {
       mainWindow.hide();
     }
   });
+
+  // With no taskbar button, a minimized window would be unreachable: send it to the tray instead.
+  mainWindow.on('minimize', () => mainWindow.hide());
+  mainWindow.on('show', () => { if (mainWindow.isMinimized()) mainWindow.restore(); });
 }
 
 // ── Single Instance Lock ───────────────────────────────────────────────────────

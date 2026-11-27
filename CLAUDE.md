@@ -38,6 +38,10 @@ Suggested note format:
 
 ## Agent Log
 
+### 2026-11-26
+- [Claude] Insomnia is now tray-only: the main window sets `skipTaskbar: true`, so it never gets a taskbar button. Minimizing hides the window to the tray, because a minimized window with no taskbar button can't be reached. When the window is shown again it is restored if it was minimized.
+- [Claude] Rebuilt `dist/Insomnia Setup 1.5.0.exe` with that change (version left at 1.5.0 since it is unreleased), SHA256 08C5C943566E45E3B510A8B7E9B44F3ED3B6693073F6E9074AC7963DAA0F1AF1, supersedes the earlier 1.5.0 hashes. Installed silently on profile `shelh`; the hook launcher points back at the installed exe. Build note: the winCodeSign symlink error can be avoided without elevation by extracting the cached `.7z` with `7za x -x!darwin` into `%LOCALAPPDATA%\electron-builder\Cache\winCodeSign\winCodeSign-2.6.0`, because Windows builds never use the darwin files.
+
 ### 2026-09-07
 - [Claude] Installed Insomnia on the new PC (user profile `nzube`). Two things made it a no-op there: this machine has no Node on PATH, so every hook Insomnia writes (`node "...agent-hook.js"`) failed silently, and the carried-over `~/.claude/settings.json` still had a `Stop` hook pointing at the old `C:\Users\HP\...` install path. App looked installed and did nothing.
 - [Claude] v1.5.0: hooks no longer depend on a Node install. `ensureHookLauncher()` writes `~/.insomnia/insomnia-hook.cmd`, a batch/shell polyglot that re-execs the app's own Electron binary with `ELECTRON_RUN_AS_NODE=1`. Claude Code hooks and the Codex `notify` line (now `['cmd','/c',<launcher>,...]` using TOML literal strings so Windows backslashes survive) both point at it. Polyglot because we do not control which shell the host tool spawns hooks with — verified working from both cmd.exe and Git Bash with no Node installed. Regenerated on every launch so upgrades and reinstalls keep the path fresh.
@@ -87,9 +91,9 @@ Suggested note format:
 ### 2026-05-26
 - [Claude] Converted Cursor integration from process-based to hook-based (transcript-polling). Old behavior: kept PC awake whenever cursor.exe was open, regardless of activity. New behavior: polls `~/.cursor/projects/*/agent-transcripts/**/*.jsonl` every 5s for mtime/size changes; when any transcript file changes, writes a `cursor:agent` activity entry to `~/.insomnia/agent-sessions.json` and the existing 3-min timeout logic handles the rest. Mirrors the Codex app-server approach exactly. No CLI hook needed — transcript files are the only signal required. Startup cleanup added for stale `cursor:agent` entries. Watcher started/stopped on integration enable/disable and app quit.
 
-## Current State (as of 2026-09-07)
+## Current State (as of 2026-11-27)
 
-- **Version**: v1.5.0 built locally (`dist/Insomnia Setup 1.5.0.exe`, SHA256 2C3C7BD726880604A4471BB16449C43435932560AFDF2E00AD56C8284C5F643B), not yet released. v1.4.3 released. GitHub release `v1.4.3` live with installer `Insomnia.Setup.1.4.3.exe`. SHA256: 394D25A0BE3DBA6CECA610C8AA3538B32A35D57BAA6F91FBEBB0CB26E25096E8.
+- **Version**: v1.5.0 built locally (`dist/Insomnia Setup 1.5.0.exe`, SHA256 08C5C943566E45E3B510A8B7E9B44F3ED3B6693073F6E9074AC7963DAA0F1AF1, includes tray-only window), not yet released. v1.4.3 released. GitHub release `v1.4.3` live with installer `Insomnia.Setup.1.4.3.exe`. SHA256: 394D25A0BE3DBA6CECA610C8AA3538B32A35D57BAA6F91FBEBB0CB26E25096E8.
 - **Hook runtime**: since v1.5.0 no hook depends on a Node install. All hooks call `~/.insomnia/insomnia-hook.cmd`, a batch/shell polyglot regenerated on every launch that runs the app's bundled Electron with `ELECTRON_RUN_AS_NODE=1`.
 - **Out of the box**: a fresh install (no config.json) auto-enables every integration whose tool directory is present, so a clean install needs zero clicks.
 - **Detection**: Claude Code = hook-based (`~/.claude/settings.json`). Codex = hook-based dual-path: `notify` in `~/.codex/config.toml` for CLI + session transcript watcher/poller for VS Code and standalone app-server surfaces. Cursor = hook-based: polls `~/.cursor/projects/*/agent-transcripts/**/*.jsonl` every 5s for active Agent session activity. Aider/Ollama = process-based with 30s grace.
