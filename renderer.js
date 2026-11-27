@@ -141,6 +141,14 @@ startupToggle.addEventListener('change', async () => {
   startupToggle.checked = val;
 });
 
+// ── Theme ──────────────────────────────────────────────────────────────────────
+const themeSelect = document.getElementById('themeSelect');
+window.insomnia.getTheme().then(val => { themeSelect.value = val; });
+
+themeSelect.addEventListener('change', async () => {
+  themeSelect.value = await window.insomnia.setTheme(themeSelect.value);
+});
+
 // ── Drawer Tabs ────────────────────────────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {

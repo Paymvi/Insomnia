@@ -23,5 +23,9 @@ contextBridge.exposeInMainWorld('insomnia', {
 
   // Startup
   getStartup: () => ipcRenderer.invoke('get-startup'),
-  toggleStartup: () => ipcRenderer.invoke('toggle-startup')
+  toggleStartup: () => ipcRenderer.invoke('toggle-startup'),
+
+  // Theme
+  getTheme: () => ipcRenderer.invoke('get-theme'),
+  setTheme: (theme) => ipcRenderer.invoke('set-theme', theme)
 });

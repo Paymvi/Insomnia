@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, dialog, powerSaveBlocker } = require('electron');
+const { app, BrowserWindow, Tray, Menu, ipcMain, dialog, powerSaveBlocker, nativeTheme } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -148,6 +148,8 @@ function loadConfig() {
   if (!config.watchedIntegrations) config.watchedIntegrations = [];
   if (!config.seenIntegrations) config.seenIntegrations = [];
   if (config.launchOnStartup === undefined) config.launchOnStartup = true;
+  if (!['system', 'light', 'dark'].includes(config.theme)) config.theme = 'system';
+  nativeTheme.themeSource = config.theme;
   manualAwake = config.manualAwake || false;
 }
 
@@ -1226,6 +1228,16 @@ function setupIPC() {
     return config.launchOnStartup;
   });
 
+  ipcMain.handle('get-theme', () => config.theme);
+
+  ipcMain.handle('set-theme', (_, theme) => {
+    if (!['system', 'light', 'dark'].includes(theme)) return config.theme;
+    config.theme = theme;
+    nativeTheme.themeSource = theme;
+    saveConfig();
+    return config.theme;
+  });
+
   ipcMain.handle('toggle-integration', (_, integrationId) => {
     const found = config.watchedIntegrations.find(i => i.id === integrationId);
     if (found) {
@@ -1273,7 +1285,7 @@ function setupIPC() {
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 500,
-    height: 760,
+    height: 830,
     resizable: false,
     maximizable: false,
     icon: path.join(ASSETS, 'icon.png'),

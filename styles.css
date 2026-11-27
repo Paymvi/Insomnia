@@ -692,3 +692,59 @@ footer {
   flex-direction: column;
   height: 100vh;
 }
+
+/* ── Theme Select ───────────────────────────────────────────────────────────── */
+
+.theme-select {
+  background: #f2f2f7;
+  color: #1d1d1f;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ── Dark Mode ──────────────────────────────────────────────────────────────── */
+/* Follows nativeTheme.themeSource, set from config.theme in main.js. */
+
+:root { color-scheme: light dark; }
+
+@media (prefers-color-scheme: dark) {
+  body, .drawer { background: #1c1c1e; color: #f5f5f7; }
+
+  h1, .toggle-label, .watch-item-name, .drawer-header h2,
+  .app-grid-item .app-item-name, .integration-name,
+  .drawer-search input { color: #f5f5f7; }
+
+  .toggle-card, .watch-item, .integration-item, .drawer-search,
+  .btn-browse, .tab.active, .app-grid-item:hover { background: #2c2c2e; }
+
+  .tab.active { color: #f5f5f7; }
+
+  .toggle-divider, .drawer-tabs, .slider, .btn-close,
+  .theme-select, .watch-item-icon, .integration-icon,
+  .app-grid-item .app-placeholder-icon { background: #3a3a3c; }
+
+  .theme-select { color: #f5f5f7; }
+
+  .btn-add { background: #f5f5f7; color: #1d1d1f; }
+
+  .btn-close:hover, .btn-browse:hover { background: #48484a; color: #f5f5f7; }
+
+  .spinner { border-color: #3a3a3c; border-top-color: #f5f5f7; }
+
+  .watchlist::-webkit-scrollbar-thumb,
+  .drawer-scroll::-webkit-scrollbar-thumb { background: #48484a; }
+
+  .watchlist-empty, footer, .btn-remove { color: #636366; }
+
+  .modal-overlay { background: rgba(0, 0, 0, 0.5); }
+
+  .integration-badge.hook, .watch-item-type.integration { background: #1e3a24; color: #63d27a; }
+  .integration-badge.process { background: #1a2f45; color: #64a8f0; }
+  .integration-badge.added-badge, .watch-item-type.app { background: #3a3a3c; color: #8e8e93; }
+}
